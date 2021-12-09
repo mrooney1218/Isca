@@ -141,6 +141,12 @@ v_array_total = v_array_vortex+v_array_vortex_sp + v_array_jet+v_array_jet_sp
 height_array_total = height_array_vortex+height_array_vortex_sp + height_array_jet+height_array_jet_sp
 grad_geopot_total = grad_geopot_vortex + grad_geopot_vortex_sp + grad_geopot_jet + grad_geopot_jet_sp
 
+noise = np.random.rand(128,256)
+noise = noise -0.5
+noise = np.max(u_array_total)*1e-4
+
+u_array_total = u_array_total + noise
+
 vor_array, div_array = convert_to_vor_div(u_array_total, v_array_total, height_array_total, planet_radius)
 
 
