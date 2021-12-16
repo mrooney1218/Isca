@@ -4,7 +4,7 @@ import numpy as np
 
 from isca import ShallowCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
-NCORES = 8
+NCORES = 16
 base_dir = os.path.dirname(os.path.realpath(__file__))
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
@@ -19,11 +19,11 @@ cb = ShallowCodeBase.from_directory(GFDL_BASE)
 # is used to load the correct compilers.  The env file is always loaded from
 # $GFDL_BASE and not the checked out git repo.
 
-input_files = [os.path.join(base_dir,'input/rostami_t85_jet_and_vortex_mk7.nc')]
+input_files = [os.path.join(base_dir,'input/rostami_t341_jet_only_plus_noise.nc')]
 
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
-exp = Experiment('shallow_test_experiment_nc_init_cond_rostami_1_daily_t85_mk7', codebase=cb)
+exp = Experiment('saturn_test_jet_only_high_res_noise', codebase=cb)
 
 #Tell model how to write diagnostics
 diag = DiagTable()
@@ -35,7 +35,7 @@ diag.add_field('shallow_diagnostics', 'vcomp', time_avg=True)
 diag.add_field('shallow_diagnostics', 'vor', time_avg=True)
 diag.add_field('shallow_diagnostics', 'div', time_avg=True)
 diag.add_field('shallow_diagnostics', 'h', time_avg=True)
-diag.add_field('shallow_diagnostics', 'pv', time_avg=True)
+diag.add_field('shallow_diagnostics', 'pv_corrected', time_avg=True)
 diag.add_field('shallow_diagnostics', 'stream', time_avg=True)
 diag.add_field('shallow_diagnostics', 'trs', time_avg=True)
 diag.add_field('shallow_diagnostics', 'tr', time_avg=True)
@@ -49,11 +49,11 @@ exp.clear_rundir()
 #Define values for the 'core' namelist
 exp.namelist = namelist = Namelist({
     'main_nml':{
-     'days'   : 1,
+     'days'   : 10,
      'hours'  : 0,
      'minutes': 0,
      'seconds': 0,
-     'dt_atmos': 1200,
+     'dt_atmos': 600, #worst case scenario reduce to 300
      'calendar': 'no_calendar',
     },
 
@@ -72,10 +72,10 @@ exp.namelist = namelist = Namelist({
     },
 
  'shallow_dynamics_nml':{
-   'num_lon'             : 256,
-   'num_lat'             : 128,
-   'num_fourier'         : 85,
-   'num_spherical'       : 86,
+   'num_lon'             : 1024,
+   'num_lat'             : 512,
+   'num_fourier'         : 341,
+   'num_spherical'       : 342,
    'fourier_inc'         : 1,
    'damping_option'      : 'resolution_dependent',
    'damping_order'       : 4,
@@ -86,7 +86,7 @@ exp.namelist = namelist = Namelist({
    'robert_coeff'        : 0.04,
    'robert_coeff_tracer' : 0.04,
    'initial_condition_from_input_file':True,
-   'init_cond_file':'rostami_t85_jet_and_vortex_mk7'
+   'init_cond_file':'rostami_t341_jet_only_plus_noise' #need to change this
     },
 
  'shallow_physics_nml':{
@@ -105,5 +105,5 @@ if __name__=="__main__":
     cb.compile()  # compile the source code to working directory $GFDL_WORK/codebase
     exp.inputfiles = input_files
     exp.run(1, use_restart=False, num_cores=NCORES)
-   #  for i in range(2,121):
-   #      exp.run(i, num_cores=NCORES)
+    for i in range(2,4):
+         exp.run(i, num_cores=NCORES)

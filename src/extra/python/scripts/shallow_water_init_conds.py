@@ -94,6 +94,9 @@ def set_u_v_height_field(lon_in, lat_in, lonb_in, latb_in, epsilon, alpha, beta,
     geopotential_si_units = geopotential_av_removed * deformation_scale
 
     h_0 = (deformation_scale*f_0)**2.
+	
+    plt.plot(r_array[:,0], geopotential_av_removed[:,0])    pdb.set_trace()
+
 
     return u_si_units, v_si_units, geopotential_si_units, h_0, grad_geopot
 

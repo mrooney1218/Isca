@@ -21,7 +21,7 @@ cb = ShallowCodeBase.from_directory(GFDL_BASE)
 
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
-exp = Experiment('shallow_stirring_test_experiment', codebase=cb)
+exp = Experiment('shallow_stirring_test_plot', codebase=cb)
 
 #Tell model how to write diagnostics
 diag = DiagTable()
@@ -122,5 +122,5 @@ if __name__=="__main__":
     cb.compile()  # compile the source code to working directory $GFDL_WORK/codebase
 
     exp.run(1, use_restart=False, num_cores=NCORES)
-    for i in range(2,122):
+    for i in range(2,26):
         exp.run(i, num_cores=NCORES)
